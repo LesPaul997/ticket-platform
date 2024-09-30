@@ -1,4 +1,4 @@
-package org.hello.spring.model;
+package org.hello.spring.mvc.db.model;
 
 import java.time.LocalDateTime;
 
@@ -38,6 +38,8 @@ public class Operator {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 
+	// Getter e Setter
+	
 	public Integer getId() {
 		return id;
 	}
