@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/fragments :: head}">
+</head>
+<body>
+	<header th:insert="~{fragments/fragments :: navbar}">
+		
+	</header>
+    
+	<main class="container">
+		<div class="row">
+			<div class="col-12">	
+				
+				<th:block>
+					
+				
+					<h1 class="py-4 mb-2 text-center">
+						Creazione di un nuovo tickets
+					</h1>	
+					
+						<div class="row justify-content-center">
+							<div class="col-6">
+								<!-- Form -->
+								<form id="pizza-form" th:object="${ticket}" th:action="@{/tickets/create}" method="POST">
+									<div class="mb-3">
+									  <label for="title" class="form-label">Titolo Ticket</label>
+									  <input type="text" class="form-control" id="title" placeholder="Inserisci il nome della pizza" th:field="*{title}" th:errorClass="is-invalid">
+									  <div th:if="${#fields.hasErrors('title')}" class="invalid-feedback">
+										<ul>
+											<li th:each="err : ${#fields.errors('title')}" th:text="${err}"></li>
+										</ul>
+									  </div>
+									</div>
+									<div class="mb-3">
+									  <label for="description" class="form-label">Descrizione</label>
+									  <input type="text" class="form-control" id="description" placeholder="Descrivi la pizza" th:field="*{description}" th:errorClass="is-invalid">
+									  <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback">
+									  	<ul>
+									  		<li th:each="err : ${#fields.errors('description')}" th:text="${err}"></li>
+									  	</ul>
+									  </div>
+									</div>
+									
+									<div class="mb-3">
+										<label for="category" class="form-label">Categoria</label>
+										<select class="form-select" id="category" th:field="*{category}">
+											<option value="Gestionale">Gestionale</option>
+											<option value="Hardware">Hardware</option>
+										</select>
+										</div>
+										<div class="mb-3">
+											<label for="operator" class="form-label">Assegnato a</label>
+											<select class="form-select" id="operator" th:field="*{operator}">
+												<th:block th:each="operator : ${operators}">
+													<th:block th:if="${operator.status} == true">
+														<option th:value="${operator.id}">[[${operator.username}]]</option>
+													</th:block>
+												</th:block>
+											</select>
+										</div>
+									<!-- Bottoni -->
+									<div class="mb-3 d-flex justify-content-between">
+										<input type="submit" class="btn btn-primary btn-lg" value="Conferma inserimento">
+										<input type="reset" class="btn btn-warning btn-lg" value="Reset">
+									</div>
+									<!-- /Bottoni -->
+								</form>
+							</div>
+						</div>
+						
+							
+					
+				</th:block>	
+				
+			</div>	
+		</div>
+		
+	</main>
+	
+	<footer th:replace="~{fragments/fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,36 +1,29 @@
-<!--<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/fragments :: head('index')}"></head>
+	<head th:insert="~{fragments/fragments :: head}">
+	</head>
 <body>
-	<header>
-		<nav th:replace="~{fragments/fragments :: navbar('index')}"></nav>
+	<header th:insert="~{fragments/fragments :: navbar}">
+			
 	</header>
 	<main>
-		<div class="card mx-4 my-4" style="width: 18rem;">
-			<img th:src="@{/img/dummy_300x200_ffffff_cccccc.png}" class="card-img-top" alt="...">
-			<div class="card-body">
-				<p th:text="|Ticket Platform by ${name}|" class="card-text text-center fs-4"></p>
+		<h1>INDEX</h1>
+		<div>	
+			<div class="card" style="width: 18rem;">
+			  <img src="/src/main/resources/static/img/operatore1.png" class="card-img-top" alt="...">
+			  <div class="card-body">
+			    <h5 class="card-title">Card title</h5>
+			    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+			    <a href="#" class="btn btn-primary">Go somewhere</a>
+			  </div>
 			</div>
 		</div>
 	</main>
 	<footer>
-		<th:block th:replace="~{fragments/fragments :: scripts}"></th:block>
+		<th:block th:replace="~{fragments/fragments :: footer}"></th:block>
 	</footer>
 </body>
-</html>-->
-
-
-
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head></head>
-<body>
-	
-	<main>
-		<div>
-			<h1>HOMEPAGE!</h1>
-		</div>	
-	</main>
-	
-</body>
 </html>
+
+
+

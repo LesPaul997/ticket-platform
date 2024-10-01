@@ -24,6 +24,16 @@ public class Operator {
 	private Integer id;
 	
 	@NotNull
+	@Size(max = 50)
+	@Column(name = "username", length = 50, nullable = false, unique = true)
+	private String username;
+	
+	@NotNull
+	@Size(max = 50)
+	@Column(name = "password", length = 50, nullable = false)
+	private String password;
+	
+	@NotNull
 	@NotEmpty
 	@Size(max = 100)
 	@Column(name = "email", length = 100, nullable = false, unique = true)
@@ -78,6 +88,22 @@ public class Operator {
 
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 	

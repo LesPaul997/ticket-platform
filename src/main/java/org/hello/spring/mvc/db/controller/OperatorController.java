@@ -17,11 +17,11 @@ public class OperatorController {
 	@Autowired
 	private OperatorRepository repo;
 
-	@GetMapping("/")
+	@GetMapping("/index")
 	public String index(Model model) {
 		
 		List<Operator> operators = repo.findAll();
 		model.addAttribute("operators", operators);
-		return "index";
+		return "/operators/index";
 	}
 }
