@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/fragments :: head}">
+</head>
+<body>
+	<header th:insert="~{fragments/fragments :: navbar}">
+		
+	</header>
+    
+	<main class="container">
+		<div class="row">
+			<div class="col-12">	
+				
+				<th:block>
+					
+				
+					<h1 class="py-4 mb-2 text-center">
+						Modifica Ticket <strong>"[[ ${ticket.title} ]]"</strong>
+					</h1>	
+					
+						<div class="row justify-content-center">
+							<div class="col-6">
+								<!-- Form -->
+								<form id="ticket-form" th:object="${ticket}" th:action="@{/tickets/edit/{id}(id=*{id})}" method="POST">
+									<div class="mb-3">
+									  <label for="title" class="form-label">Titolo ticket</label>
+									  <input type="text" class="form-control" id="title" placeholder="Inserisci il titolo del ticket" th:field="*{title}" th:errorClass="is-invalid">
+									  <div th:if="${#fields.hasErrors('title')}" class="invalid-feedback">
+										<ul>
+											<li th:each="err : ${#fields.errors('title')}" th:text="${err}"></li>
+										</ul>
+									  </div>
+									</div>
+									<div class="mb-3">
+									  <label for="description" class="form-label">Descrizione del problema</label>
+									  <input type="text" class="form-control" id="description" placeholder="Descrivi il problema" th:field="*{description}" th:errorClass="is-invalid">
+									  <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback">
+									  	<ul>
+									  		<li th:each="err : ${#fields.errors('description')}" th:text="${err}"></li>
+									  	</ul>
+									  </div>
+									</div>
+									<div class="mb-3">
+										<label for="category" class="form-label">Categoria</label>
+										<select class="form-select" id="category" th:field="*{category}">
+											<option value="Software">Software</option>
+											<option value="Hardware">Hardware</option>
+										</select>
+									</div>
+									
+									<div class="mb-3">
+										<label for="status" class="form-label">Stato</label>
+										<select class="form-select" id="status" th:field="*{status}">
+											<option value="da fare" selected>da fare</option>
+											<option value="in corso">in corso</option>
+											<option value="completato">completato</option>
+										</select>
+									</div>
+									<input type="hidden" th:field="*{createdAt}">
+									
+									<!-- Bottoni -->
+									<div class="mb-3 d-flex justify-content-between">
+										<input type="submit" class="btn btn-primary btn-lg" value="Aggiorna ticket">
+										<input type="reset" class="btn btn-warning btn-lg" value="Reset fields">
+									</div>
+									<!-- /Bottoni -->
+								</form>
+							</div>
+						</div>
+						
+							
+					
+				</th:block>	
+				
+			</div>	
+		</div>
+		
+	</main>
+	
+	<footer th:replace="~{fragments/fragments :: footer}"></footer>
+</body>
+</html>

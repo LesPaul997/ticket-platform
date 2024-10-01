@@ -90,7 +90,43 @@ public class TicketController {
 		return "redirect:/tickets";
 	}
 
+	// EDIT
+	@GetMapping("/edit/{id}")
+	public String edit(@PathVariable int id, Model model) {
+
+		Ticket ticketToEdit = ticketService.getById(id);
 		
+		model.addAttribute("ticket", ticketToEdit);
+		model.addAttribute("operators", userService.getAll());
+
+		return "tickets/edit";
+	}
 		
+	
+	// UPDATE
+	@PostMapping("/edit/{id}")
+	public String update(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, Model model,
+			RedirectAttributes attributes) {
+
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("operators", userService.getAll());
+			return "/tickets/edit";
+		}
+
+		ticketService.save(ticketForm);
+		attributes.addFlashAttribute("successMessage", "ticket " + ticketForm.getId() + " modificato con successo");
+
+		return "redirect:/tickets";
+	}
 		
+	// DELETE
+	@PostMapping("/delete/{id}")
+	public String delete(@PathVariable int id, RedirectAttributes attributes) {
+		
+		ticketService.deleteById(id);
+		attributes.addFlashAttribute("successMessage", "ticket #" + id + " eliminato con successo");
+		
+		return "redirect:/tickets";
+	}
+
 }
