@@ -47,22 +47,14 @@
 											<option value="Hardware">Hardware</option>
 										</select>
 										</div>
-										<div class="mb-3">
-											<label for="user" class="form-label">Assegnato a</label>
-											<select class="form-select" id="user" th:field="*{user}">
-												<th:block th:each="operator : ${operators}">
-													<th:block th:if="${operator.status} == true">
-														<option th:value="${operator.id}">[[${operator.username}]]</option>
-													</th:block>
-												</th:block>
-											</select>
-										</div>
+										
 									<!-- Bottoni -->
 									<div class="mb-3 d-flex justify-content-between">
 										<input type="submit" class="btn btn-primary btn-lg" value="Conferma inserimento">
 										<input type="reset" class="btn btn-warning btn-lg" value="Reset">
 									</div>
 									<!-- /Bottoni -->
+									<input type="hidden" th:field="*{status}">
 								</form>
 							</div>
 						</div>

@@ -9,10 +9,16 @@ import org.hello.spring.mvc.dc.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.validation.Valid;
 
 
 // Home index
@@ -67,4 +73,24 @@ public class TicketController {
 		return "/tickets/create";
 	}
 	
+		
+	// STORE
+	@PostMapping("/create")
+	public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, Model model,
+			RedirectAttributes attributes) {
+
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("operators", userService.getAll());
+			return "/tickets/create";
+		}
+
+		ticketService.save(ticketForm);
+		attributes.addFlashAttribute("successMessage", "ticket " + ticketForm.getId() + " creato con successo");
+
+		return "redirect:/tickets";
+	}
+
+		
+		
+		
 }

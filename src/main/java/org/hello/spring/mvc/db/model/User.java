@@ -1,15 +1,20 @@
 package org.hello.spring.mvc.db.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -47,7 +52,13 @@ public class User {
 
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Set<Role> roles;
 
+	@OneToMany//(mappedBy = "user", cascade = { CascadeType.REMOVE })
+	private List<Ticket> tickets;
+	
 	// Getter e Setter
 	
 	public Integer getId() {
@@ -104,6 +115,22 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	public List<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(List<Ticket> tickets) {
+		this.tickets = tickets;
 	}
 	
 	
