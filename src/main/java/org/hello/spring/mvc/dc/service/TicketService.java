@@ -32,7 +32,7 @@ public class TicketService {
 		return repo.findAll();
 	}
 	
-	public List<Ticket> getNameWithOrderByTitle(String title) {
+	public List<Ticket> getTitleWithOrderByTitle(String title) {
 		
 		return repo.findByTitleContainingOrderByTitle(title);
 	}

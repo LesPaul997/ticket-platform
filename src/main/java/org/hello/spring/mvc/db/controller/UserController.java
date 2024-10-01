@@ -2,8 +2,8 @@ package org.hello.spring.mvc.db.controller;
 
 import java.util.List;
 
-import org.hello.spring.mvc.db.model.Operator;
-import org.hello.spring.mvc.db.repo.OperatorRepository;
+import org.hello.spring.mvc.db.model.User;
+import org.hello.spring.mvc.db.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/")
-public class OperatorController {
+public class UserController {
 	
 	@Autowired
-	private OperatorRepository repo;
+	private UserRepository repo;
 
 	@GetMapping("/index")
 	public String index(Model model) {
 		
-		List<Operator> operators = repo.findAll();
-		model.addAttribute("operators", operators);
-		return "/operators/index";
+		List<User> operators = repo.findAll();
+		model.addAttribute("users", operators);
+		return "/users/index";
 	}
 }

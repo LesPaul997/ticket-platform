@@ -13,7 +13,6 @@
 				
 				<th:block>
 					
-				
 					<h1 class="py-4 mb-2 text-center">
 						Creazione di un nuovo tickets
 					</h1>	
@@ -24,7 +23,7 @@
 								<form id="pizza-form" th:object="${ticket}" th:action="@{/tickets/create}" method="POST">
 									<div class="mb-3">
 									  <label for="title" class="form-label">Titolo Ticket</label>
-									  <input type="text" class="form-control" id="title" placeholder="Inserisci il nome della pizza" th:field="*{title}" th:errorClass="is-invalid">
+									  <input type="text" class="form-control" id="title" placeholder="Inserisci il titolo del ticket" th:field="*{title}" th:errorClass="is-invalid">
 									  <div th:if="${#fields.hasErrors('title')}" class="invalid-feedback">
 										<ul>
 											<li th:each="err : ${#fields.errors('title')}" th:text="${err}"></li>
@@ -33,7 +32,7 @@
 									</div>
 									<div class="mb-3">
 									  <label for="description" class="form-label">Descrizione</label>
-									  <input type="text" class="form-control" id="description" placeholder="Descrivi la pizza" th:field="*{description}" th:errorClass="is-invalid">
+									  <input type="text" class="form-control" id="description" placeholder="Descrivi il problema" th:field="*{description}" th:errorClass="is-invalid">
 									  <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback">
 									  	<ul>
 									  		<li th:each="err : ${#fields.errors('description')}" th:text="${err}"></li>
@@ -44,13 +43,13 @@
 									<div class="mb-3">
 										<label for="category" class="form-label">Categoria</label>
 										<select class="form-select" id="category" th:field="*{category}">
-											<option value="Gestionale">Gestionale</option>
+											<option value="Software">Software</option>
 											<option value="Hardware">Hardware</option>
 										</select>
 										</div>
 										<div class="mb-3">
-											<label for="operator" class="form-label">Assegnato a</label>
-											<select class="form-select" id="operator" th:field="*{operator}">
+											<label for="user" class="form-label">Assegnato a</label>
+											<select class="form-select" id="user" th:field="*{user}">
 												<th:block th:each="operator : ${operators}">
 													<th:block th:if="${operator.status} == true">
 														<option th:value="${operator.id}">[[${operator.username}]]</option>

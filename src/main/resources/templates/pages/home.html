@@ -7,14 +7,13 @@
 			
 	</header>
 	<main>
-		<h1>HOME</h1>
-		<div>	
-			<div class="card" style="width: 18rem;">
-			  <img src="/src/main/resources/static/img/operatore1.png" class="card-img-top" alt="...">
-			  <div class="card-body">
-			    <h5 class="card-title">Card title</h5>
-			    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-			    <a href="#" class="btn btn-primary">Go somewhere</a>
+		<div class="d-flex justify-content-center">
+			<div class="card mx-4 my-4" style="width: 25rem;">
+			  <!--<img src="@{/img/operatore1.png}" class="card-img-top" alt="Operatore1">-->
+			  <div class="card-body text-center">
+			    <h5 class="card-title">Gestione Ticket</h5>
+			    <p class="card-text">Benvenuto, per info clicca il bottone</p>
+			    <a th:href="@{/tickets}" class="btn btn-primary d-flex justify-content-center">Area Ticket</a>
 			  </div>
 			</div>
 		</div>

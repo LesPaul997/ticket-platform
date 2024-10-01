@@ -1,2 +1,2 @@
-INSERT INTO tickets (title, description, category, status, created_at, updated_at) VALUES ('Aiuto','Non mi funziona','Aiuto','da eseguire','2024-08-28 20:00:00','2024-08-28 20:00:00');
-INSERT INTO operators (username, password, email, status, created_at, updated_at) VALUES ('admin', '{noop}q', "admin@ticketplatform.org",0,'2024-08-28 20:00:00','2024-08-28 20:00:00');
+INSERT INTO tickets (title, description, category, status, created_at, updated_at) VALUES ('Aiuto','Non mi funziona','Aiuto','da eseguire','2024-08-28 20:00:00','2024-08-28 20:00:00'),('Problema installazione','Non se riesce ad installare','Problema','da eseguire','2024-08-28 20:00:00','2024-08-28 20:00:00');
+INSERT INTO users (username, password, email, status, created_at, updated_at) VALUES ('admin', '{noop}q', "admin@ticketplatform.org",0,'2024-08-28 20:00:00','2024-08-28 20:00:00'),('mario', '{noop}w', "mario@ticketplatform.org",1,'2024-08-28 20:00:00','2024-08-28 20:00:00');
