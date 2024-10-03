@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DialectOverride.Formula;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,8 +25,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+@SuppressWarnings("unused")
+
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User {
 
 	@Id
@@ -56,16 +60,23 @@ public class User {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 	
-	@ManyToMany
-	@JoinTable(
-			name = "users_roles",
-			joinColumns = @JoinColumn(name = "user_id"),
-			inverseJoinColumns = @JoinColumn(name = "roles_id")
-			)
-	private Set<Role> roles = new HashSet<>();
 
-	@OneToMany//(mappedBy = "user", cascade = { CascadeType.REMOVE })
+	@OneToMany(mappedBy = "user", cascade = { CascadeType.REMOVE })
 	private List<Ticket> tickets;
+	
+	@OneToMany(mappedBy = "user", cascade = { CascadeType.REMOVE })
+	private List<Note> notes;
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+	    name = "user_roles",
+	    joinColumns = @JoinColumn(name = "user_id"),
+	    inverseJoinColumns = @JoinColumn(name = "role_id")
+	)
+	private Set<Role> roles = new HashSet<>();
+	
+	// Formula per calcolare i ticket in corso associati ad un utente
+	private Integer InProgress;
 	
 	// Getter e Setter
 	
@@ -139,6 +150,22 @@ public class User {
 
 	public void setTickets(List<Ticket> tickets) {
 		this.tickets = tickets;
+	}
+
+	public List<Note> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(List<Note> notes) {
+		this.notes = notes;
+	}
+
+	public Integer getInProgress() {
+		return InProgress;
+	}
+
+	public void setInProgress(Integer inProgress) {
+		this.InProgress = inProgress;
 	}
 	
 	

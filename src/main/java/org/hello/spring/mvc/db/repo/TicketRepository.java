@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TicketRepository extends JpaRepository<Ticket, Integer>{
 
 	List<Ticket> findByTitleContainingOrderByTitle(String title);
+	
+	List<Ticket> findByStatus(String status);
 }

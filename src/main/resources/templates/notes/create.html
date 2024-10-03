@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/fragments :: head}">
+</head>
+<body>
+	<header th:insert="~{fragments/fragments :: navbar}">
+		
+	</header>
+    
+	<main class="container">
+		<div class="row">
+			<div class="col-12">	
+				
+				<th:block>
+					
+					<h1 class="py-4 mb-2 text-center">
+						Creazione di una nuova note
+					</h1>	
+					
+						<div class="row justify-content-center">
+							<div class="col-6">
+								<!-- Form -->
+								<form id="note-form" th:object="${note}" th:action="@{/notes/create}" method="POST">
+									<div class="form-floating">
+									  <textarea class="form-control" name="text" placeholder="Inserisci qui la tua Nota" id="text" style="height: 100px"></textarea>
+									  <label for="floatingTextarea2">Nota</label>
+									</div>
+										<ul>
+											<li th:each="err : ${#fields.errors('title')}" th:text="${err}"></li>
+										</ul>
+									  </div>
+									</div>														
+									<!-- Bottoni -->
+									<div class="mb-3 d-flex justify-content-between">
+										<input type="submit" class="btn btn-primary btn-lg" value="Conferma inserimento">
+										<input type="reset" class="btn btn-warning btn-lg" value="Reset">
+									</div>
+									<!-- /Bottoni -->
+									<input type="hidden" th:field="*{ticket.id}">
+									<input type="hidden" th:field="*{user.id}">
+								</form>
+							</div>
+						</div>
+						
+							
+					
+				</th:block>	
+				
+			</div>	
+		</div>
+		
+	</main>
+	
+	<footer th:replace="~{fragments/fragments :: footer}"></footer>
+</body>
+</html>

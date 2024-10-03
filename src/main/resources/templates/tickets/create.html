@@ -20,7 +20,7 @@
 						<div class="row justify-content-center">
 							<div class="col-6">
 								<!-- Form -->
-								<form id="pizza-form" th:object="${ticket}" th:action="@{/tickets/create}" method="POST">
+								<form id="ticket-form" th:object="${ticket}" th:action="@{/tickets/create}" method="POST">
 									<div class="mb-3">
 									  <label for="title" class="form-label">Titolo Ticket</label>
 									  <input type="text" class="form-control" id="title" placeholder="Inserisci il titolo del ticket" th:field="*{title}" th:errorClass="is-invalid">

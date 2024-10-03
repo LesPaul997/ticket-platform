@@ -3,10 +3,13 @@ package org.hello.spring.mvc.db.controller;
 import org.hello.spring.mvc.dc.service.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hello.spring.mvc.db.model.Ticket;
+import org.hello.spring.mvc.db.model.User;
 import org.hello.spring.mvc.dc.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,100 +36,167 @@ public class TicketController {
 	UserService userService;
 	
 	@GetMapping()
-	public String index(Model model) {
+	public String index(Authentication authentication, Model model) {
 		
-		model.addAttribute("tickets", ticketService.getAll());
+		// Il blocco di codice verifica se l'utente autenticato ha il ruolo di "ADMIN". 
+		// Se sì, recupera tutti i ticket e li rende disponibili nella vista /tickets/index, permettendo così all'amministratore di visualizzare tutti i ticket nel sistema.
+		if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+			model.addAttribute("tickets", ticketService.getAll());
+			return "/tickets/index";
+		}
+		
+		model.addAttribute("tickets", userService.getByUsername(authentication.getName()).getTickets());
 		return "/tickets/index";
 	}
 	
-	// Ricerca per ID
+	// Ricerca per ID SHOW
 	@GetMapping("/show/{id}")
-	public String pizzaDetails(@PathVariable int id, Model model) {
+	public String show(@PathVariable int id, Authentication authentication, Model model) {
+	    
+	    // Recupera il ticket tramite il suo ID
+	    Ticket ticketToShow = ticketService.getById(id);
+	    
+	    // Controlla se l'utente è un operatore e se il ticket non gli appartiene
+	    boolean isOperator = authentication.getAuthorities().stream()
+	                        .anyMatch(a -> a.getAuthority().equals("OPERATOR"));
+	    boolean userOwnsTicket = userService.getByUsername(authentication.getName()).getTickets()
+	                           .contains(ticketToShow);
+	    
+	    // Se l'utente è un operatore e non possiede il ticket, mostra un errore
+	    if (isOperator && !userOwnsTicket) {
+	        return "/pages/authError";
+	    }
 
-		// consegna al model di una specifica ennupla pizza tramite ID
-		model.addAttribute("ticket", ticketService.getById(id));
-		
-		return "/tickets/show";
+	    // Aggiungi il ticket al modello e mostra la vista
+	    model.addAttribute("ticket", ticketToShow);
+	    return "/tickets/show";
 	}
 	
 	// SEARCH
 	@GetMapping("/search")
-	public String search(@RequestParam String title, Model model) {
+	public String search(@RequestParam String title, Authentication authentication,  Model model) {
 		
+		// Recupera i ticket ordinati per titolo
 		List<Ticket> orderedTickets = ticketService.getTitleWithOrderByTitle(title);
-		model.addAttribute("tickets", orderedTickets);
-
+		
+		// Controlla se l'utente è un amministratore
+		boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+		
+		// Se è un amministratore, restituisci tutti i ticket
+		if (isAdmin) {
+			model.addAttribute("tickets", orderedTickets);
+			return "/tickets/index";
+		}
+		
+		// Se non è un amministratore filtra i ticket posseduti dall'utente
+		List<Ticket> ownedTickets = userService.getByUsername(authentication.getName()).getTickets();
+		
+		// Filtra i ticket ordinati che l'utente possiede
+		List<Ticket> ownedOrderedTickets = orderedTickets.stream().filter(ownedTickets::contains).collect(Collectors.toList());
+		
+		model.addAttribute("tickets", ownedOrderedTickets);
 		return "/tickets/index";
 	}
 	
+	
 	// CREATE
-		@GetMapping("/create")
-		public String create(Model model) {
+	@GetMapping("/create")
+	public String create(Model model) {
+	    
+	    // Crea un nuovo ticket con status predefinito "da fare"
+	    Ticket newTicket = new Ticket();
+	    newTicket.setStatus("da fare");
 
-		// creazione nuovo ticket a cui viene settato lo status predefinito "da fare" prima della consegna al model
-		Ticket newTicket = new Ticket();
-		newTicket.setStatus("da fare");
-		
-		model.addAttribute("ticket", newTicket);
-		model.addAttribute("operators", userService.getAll());
-		
-		return "/tickets/create";
+	    // Aggiungi il ticket e altre entità al modello
+	    model.addAttribute("ticket", newTicket);
+	    model.addAttribute("operators", userService.getAll());
+	    //model.addAttribute("categories", categoryService.getAll());
+
+	    return "/tickets/create";
 	}
 	
 		
 	// STORE
 	@PostMapping("/create")
-	public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, Model model,
-			RedirectAttributes attributes) {
+	public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, 
+	                    Model model, RedirectAttributes attributes) {
 
-		if (bindingResult.hasErrors()) {
-			model.addAttribute("operators", userService.getAll());
-			return "/tickets/create";
-		}
+	    // Controlla se ci sono errori di validazione
+	    if (bindingResult.hasErrors()) {
+	        model.addAttribute("operators", userService.getAll());
+	        //model.addAttribute("categories", categoryService.getAll());
+	        return "/tickets/create";
+	    }
 
-		ticketService.save(ticketForm);
-		attributes.addFlashAttribute("successMessage", "ticket " + ticketForm.getId() + " creato con successo");
+	    // Salva il ticket
+	    ticketService.save(ticketForm);
 
-		return "redirect:/tickets";
+	    // Aggiungi un messaggio di successo e reindirizza alla lista dei ticket
+	    attributes.addFlashAttribute("successMessage", "Ticket #" + ticketForm.getId() + " creato con successo");
+
+	    return "redirect:/tickets";
 	}
 
 	// EDIT
 	@GetMapping("/edit/{id}")
-	public String edit(@PathVariable int id, Model model) {
+	public String edit(@PathVariable int id, Authentication authentication, Model model) {
 
-		Ticket ticketToEdit = ticketService.getById(id);
-		
-		model.addAttribute("ticket", ticketToEdit);
-		model.addAttribute("operators", userService.getAll());
+	    // Recupera il ticket tramite ID
+	    Ticket ticketToEdit = ticketService.getById(id);
+	    
+	    // Controlla se l'utente è un operatore e non possiede il ticket
+	    boolean isOperator = authentication.getAuthorities().stream()
+	                        .anyMatch(a -> a.getAuthority().equals("OPERATOR"));
+	    boolean userOwnsTicket = userService.getByUsername(authentication.getName()).getTickets()
+	                           .contains(ticketToEdit);
+	    
+	    // Se l'utente è un operatore e non possiede il ticket, mostra un errore
+	    if (isOperator && !userOwnsTicket) {
+	        return "/pages/authError";
+	    }
 
-		return "tickets/edit";
+	    // Aggiungi il ticket, gli operatori e le categorie al modello
+	    model.addAttribute("ticket", ticketToEdit);
+	    model.addAttribute("operators", userService.getAll());
+	    //model.addAttribute("categories", categoryService.getAll());
+
+	    return "/tickets/edit";
 	}
+
 		
 	
 	// UPDATE
 	@PostMapping("/edit/{id}")
-	public String update(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, Model model,
-			RedirectAttributes attributes) {
+	public String update(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, 
+	                     Model model, RedirectAttributes attributes) {
 
-		if (bindingResult.hasErrors()) {
-			model.addAttribute("operators", userService.getAll());
-			return "/tickets/edit";
-		}
+	    // Controlla se ci sono errori di validazione
+	    if (bindingResult.hasErrors()) {
+	        model.addAttribute("operators", userService.getAll());
+	        //model.addAttribute("categories", categoryService.getAll());
+	        return "/tickets/edit";
+	    }
 
-		ticketService.save(ticketForm);
-		attributes.addFlashAttribute("successMessage", "ticket " + ticketForm.getId() + " modificato con successo");
+	    // Salva il ticket aggiornato
+	    ticketService.save(ticketForm);
 
-		return "redirect:/tickets";
+	    // Aggiungi un messaggio di successo e reindirizza alla pagina di dettaglio del ticket
+	    attributes.addFlashAttribute("successMessage", "Ticket #" + ticketForm.getId() + " aggiornato con successo");
+
+	    return "redirect:/tickets/show/" + ticketForm.getId();
 	}
 		
 	// DELETE
 	@PostMapping("/delete/{id}")
 	public String delete(@PathVariable int id, RedirectAttributes attributes) {
-		
-		ticketService.deleteById(id);
-		attributes.addFlashAttribute("successMessage", "ticket #" + id + " eliminato con successo");
-		
-		return "redirect:/tickets";
+
+	    // Elimina il ticket tramite il suo ID
+	    ticketService.deleteById(id);
+
+	    // Aggiungi un messaggio di successo e reindirizza alla lista dei ticket
+	    attributes.addFlashAttribute("successMessage", "Ticket #" + id + " eliminato con successo");
+
+	    return "redirect:/tickets";
 	}
 
 }
