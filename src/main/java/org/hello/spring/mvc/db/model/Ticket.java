@@ -42,9 +42,10 @@ public class Ticket {
 	@Column(name = "description")
 	private String description;
 	
-	@Size(min=2, max=255)
-	@Column(name = "category", length = 50, nullable = false)
-	private String category;
+	@ManyToOne
+	@JsonBackReference
+	@JoinColumn(name = "category_id", nullable = false)
+	private Category category;
 	
 	@Size(min=2, max=50)
 	@Column(name = "status", length = 50, nullable = false)
@@ -64,6 +65,7 @@ public class Ticket {
 	@OneToMany(mappedBy = "ticket", cascade = {CascadeType.REMOVE})
 	@JsonManagedReference
 	private List<Note> notes;
+	
 
 	public Integer getId() {
 		return id;
@@ -89,14 +91,6 @@ public class Ticket {
 		this.description = description;
 	}
 
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -119,6 +113,30 @@ public class Ticket {
 
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public List<Note> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(List<Note> notes) {
+		this.notes = notes;
 	}
 	
 	

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{fragments/fragments :: head}">
+<head th:insert="~{fragments/fragments :: head(title='Crea nota')}">
 </head>
 <body>
 	<header th:insert="~{fragments/fragments :: navbar}">
@@ -14,7 +14,7 @@
 				<th:block>
 					
 					<h1 class="py-4 mb-2 text-center">
-						Creazione di una nuova note
+						Creazione di una nuova nota
 					</h1>	
 					
 						<div class="row justify-content-center">
@@ -22,14 +22,14 @@
 								<!-- Form -->
 								<form id="note-form" th:object="${note}" th:action="@{/notes/create}" method="POST">
 									<div class="form-floating">
-									  <textarea class="form-control" name="text" placeholder="Inserisci qui la tua Nota" id="text" style="height: 100px"></textarea>
+									  <textarea class="form-control" th:field="*{text}" placeholder="Inserisci qui la tua Nota" id="text" style="height: 100px"></textarea>
 									  <label for="floatingTextarea2">Nota</label>
 									</div>
-										<ul>
-											<li th:each="err : ${#fields.errors('title')}" th:text="${err}"></li>
-										</ul>
-									  </div>
-									</div>														
+										<div th:if="${#fields.hasErrors('text')}" class="text-danger">
+										    <ul>
+										        <li th:each="err : ${#fields.errors('text')}" th:text="${err}"></li>
+										    </ul>
+										</div>													
 									<!-- Bottoni -->
 									<div class="mb-3 d-flex justify-content-between">
 										<input type="submit" class="btn btn-primary btn-lg" value="Conferma inserimento">

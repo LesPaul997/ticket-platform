@@ -1,6 +1,7 @@
 package org.hello.spring.mvc.db.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -22,7 +23,7 @@ import jakarta.validation.constraints.Size;
 @SuppressWarnings("unused")
 
 @Entity
-//@Table(name = "notes")
+@Table(name = "notes")
 public class Note {
 
 	@Id
@@ -51,7 +52,16 @@ public class Note {
 	@JsonBackReference
 	@JoinColumn(name = "ticket_id", nullable = false)
 	private Ticket ticket;
+	
+	public String getFormattedCreatedAt() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        return createdAt != null ? createdAt.format(formatter) : "";
+    }
 
+	public String getFormattedUpdatedAt() {
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+	    return updatedAt != null ? updatedAt.format(formatter) : "";
+	}
 
 	public Integer getId() {
 		return id;

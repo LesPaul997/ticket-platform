@@ -7,9 +7,12 @@ import java.util.stream.Collectors;
 
 import org.hello.spring.mvc.db.model.Ticket;
 import org.hello.spring.mvc.db.model.User;
+import org.hello.spring.mvc.dc.service.CategoryService;
 import org.hello.spring.mvc.dc.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,6 +37,9 @@ public class TicketController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	CategoryService categoryService;
 	
 	@GetMapping()
 	public String index(Authentication authentication, Model model) {
@@ -110,23 +116,47 @@ public class TicketController {
 	    // Aggiungi il ticket e altre entità al modello
 	    model.addAttribute("ticket", newTicket);
 	    model.addAttribute("operators", userService.getAll());
-	    //model.addAttribute("categories", categoryService.getAll());
+	    model.addAttribute("categories", categoryService.getAll());
 
 	    return "/tickets/create";
 	}
 	
 		
-	// STORE
+//	// STORE
+//	@PostMapping("/create")
+//	public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, 
+//	                    Model model, RedirectAttributes attributes) {
+//
+//	    // Controlla se ci sono errori di validazione
+//	    if (bindingResult.hasErrors()) {
+//	        model.addAttribute("operators", userService.getAll());
+//	        model.addAttribute("categories", categoryService.getAll());
+//	        return "/tickets/create";
+//	    }
+//
+//	    // Salva il ticket
+//	    ticketService.save(ticketForm);
+//
+//	    // Aggiungi un messaggio di successo e reindirizza alla lista dei ticket
+//	    attributes.addFlashAttribute("successMessage", "Ticket #" + ticketForm.getId() + " creato con successo");
+//
+//	    return "redirect:/tickets";
+//	}
+	
 	@PostMapping("/create")
 	public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, 
-	                    Model model, RedirectAttributes attributes) {
+	                    Model model, RedirectAttributes attributes, @AuthenticationPrincipal UserDetails currentUser) {
 
 	    // Controlla se ci sono errori di validazione
 	    if (bindingResult.hasErrors()) {
 	        model.addAttribute("operators", userService.getAll());
-	        //model.addAttribute("categories", categoryService.getAll());
+	        model.addAttribute("categories", categoryService.getAll());
 	        return "/tickets/create";
 	    }
+
+	    // Recupera l'utente attualmente loggato e assegnalo al ticket
+	    User user = userService.getByUsername(currentUser.getUsername());
+	    ticketForm.setUser(user);
 
 	    // Salva il ticket
 	    ticketService.save(ticketForm);
@@ -136,6 +166,7 @@ public class TicketController {
 
 	    return "redirect:/tickets";
 	}
+
 
 	// EDIT
 	@GetMapping("/edit/{id}")
@@ -158,7 +189,7 @@ public class TicketController {
 	    // Aggiungi il ticket, gli operatori e le categorie al modello
 	    model.addAttribute("ticket", ticketToEdit);
 	    model.addAttribute("operators", userService.getAll());
-	    //model.addAttribute("categories", categoryService.getAll());
+	    model.addAttribute("categories", categoryService.getAll());
 
 	    return "/tickets/edit";
 	}

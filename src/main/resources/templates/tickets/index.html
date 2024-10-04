@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{fragments/fragments :: head}">
+<head th:insert="~{fragments/fragments :: head(title='Ticket')}">
 </head>
 <body>
 	<header th:insert="~{fragments/fragments :: navbar}">
@@ -48,7 +48,7 @@
 											<tr th:each="ticket : ${tickets}">
 												<td th:text="${ticket.id}" class="fs-3"></td>
 												<td th:text="${ticket.title}" class="pt-3"></td>
-												<td th:text="${ticket.category}" class="pt-3"></td>
+												<td th:text="${ticket.category.name}" class="pt-3"></td>
 												<td th:text="${ticket.status}" class="pt-3"></td>
 												<td th:text="${ticket.getCreatedAt()}" class="pt-3"></td>
 												<td th:text="${ticket.getUpdatedAt()}" class="pt-3"></td>

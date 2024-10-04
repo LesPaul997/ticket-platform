@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{fragments/fragments :: head}">
+<head th:insert="~{fragments/fragments :: head(title='Crea Ticket')}">
 </head>
 <body>
 	<header th:insert="~{fragments/fragments :: navbar}">
@@ -41,12 +41,13 @@
 									</div>
 									
 									<div class="mb-3">
-										<label for="category" class="form-label">Categoria</label>
+										<label for="category" class="form-label">Scegli la categoria</label>
 										<select class="form-select" id="category" th:field="*{category}">
-											<option value="Software">Software</option>
-											<option value="Hardware">Hardware</option>
+											<th:block th:each="category : ${categories}">
+												<option th:value="${category.id}">[[${category.name}]]</option>
+											</th:block>
 										</select>
-										</div>
+									</div>
 										
 									<!-- Bottoni -->
 									<div class="mb-3 d-flex justify-content-between">
