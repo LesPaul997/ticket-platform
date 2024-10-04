@@ -1,72 +1,66 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{fragments/fragments :: head(title='Crea Ticket')}">
-</head>
+<head th:insert="~{fragments/fragments :: head(title='Crea Ticket')}"></head>
 <body>
-	<header th:insert="~{fragments/fragments :: navbar}">
-		
-	</header>
+	<header th:insert="~{fragments/fragments :: navbar}"></header>
     
-	<main class="container">
-		<div class="row">
-			<div class="col-12">	
-				
-				<th:block>
-					
-					<h1 class="py-4 mb-2 text-center">
-						Creazione di un nuovo tickets
-					</h1>	
-					
-						<div class="row justify-content-center">
-							<div class="col-6">
-								<!-- Form -->
-								<form id="ticket-form" th:object="${ticket}" th:action="@{/tickets/create}" method="POST">
-									<div class="mb-3">
-									  <label for="title" class="form-label">Titolo Ticket</label>
-									  <input type="text" class="form-control" id="title" placeholder="Inserisci il titolo del ticket" th:field="*{title}" th:errorClass="is-invalid">
-									  <div th:if="${#fields.hasErrors('title')}" class="invalid-feedback">
-										<ul>
-											<li th:each="err : ${#fields.errors('title')}" th:text="${err}"></li>
-										</ul>
-									  </div>
-									</div>
-									<div class="mb-3">
-									  <label for="description" class="form-label">Descrizione</label>
-									  <input type="text" class="form-control" id="description" placeholder="Descrivi il problema" th:field="*{description}" th:errorClass="is-invalid">
-									  <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback">
-									  	<ul>
-									  		<li th:each="err : ${#fields.errors('description')}" th:text="${err}"></li>
-									  	</ul>
-									  </div>
-									</div>
-									
-									<div class="mb-3">
-										<label for="category" class="form-label">Scegli la categoria</label>
-										<select class="form-select" id="category" th:field="*{category}">
-											<th:block th:each="category : ${categories}">
-												<option th:value="${category.id}">[[${category.name}]]</option>
-											</th:block>
-										</select>
-									</div>
-										
-									<!-- Bottoni -->
-									<div class="mb-3 d-flex justify-content-between">
-										<input type="submit" class="btn btn-primary btn-lg" value="Conferma inserimento">
-										<input type="reset" class="btn btn-warning btn-lg" value="Reset">
-									</div>
-									<!-- /Bottoni -->
-									<input type="hidden" th:field="*{status}">
-								</form>
-							</div>
-						</div>
-						
-							
-					
-				</th:block>	
-				
-			</div>	
+	<main class="container my-5">
+		<div class="text-center mb-5">
+			<h1 class="display-6 fw-bold">Creazione di un nuovo Ticket</h1>
 		</div>
 		
+		<div class="row justify-content-center">
+			<div class="col-md-8 col-lg-6">
+				<!-- Form -->
+				<form id="ticket-form" th:object="${ticket}" th:action="@{/tickets/create}" method="POST" class="p-4 shadow-sm rounded-3 border bg-light">
+					<div class="mb-4">
+						<label for="title" class="form-label fw-semibold">Titolo Ticket</label>
+						<input type="text" class="form-control" id="title" placeholder="Inserisci il titolo del ticket" th:field="*{title}" th:errorClass="is-invalid">
+						<div th:if="${#fields.hasErrors('title')}" class="invalid-feedback">
+							<ul>
+								<li th:each="err : ${#fields.errors('title')}" th:text="${err}"></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="mb-4">
+						<label for="description" class="form-label fw-semibold">Descrizione</label>
+						<textarea class="form-control" id="description" placeholder="Descrivi il problema" th:field="*{description}" rows="3" th:errorClass="is-invalid"></textarea>
+						<div th:if="${#fields.hasErrors('description')}" class="invalid-feedback">
+							<ul>
+								<li th:each="err : ${#fields.errors('description')}" th:text="${err}"></li>
+							</ul>
+						</div>
+					</div>
+					
+					<div class="mb-4">
+						<label for="category" class="form-label fw-semibold">Scegli la categoria</label>
+						<select class="form-select" id="category" th:field="*{category}">
+							<th:block th:each="category : ${categories}">
+								<option th:value="${category.id}" th:text="${category.name}"></option>
+							</th:block>
+						</select>
+					</div>
+
+					<div class="mb-4">
+						<label for="operator" class="form-label fw-semibold">Assegna operatore</label>
+						<select class="form-select" id="operator" th:field="*{user}">
+							<th:block th:each="operator : ${operators}">
+								<option th:value="${operator.id}" th:text="${operator.username}" th:if="${operator.status}"></option>
+							</th:block>
+						</select>
+					</div>
+
+					<!-- Bottoni -->
+					<div class="d-flex justify-content-between mt-4">
+						<button type="submit" class="btn btn-primary btn-lg">Conferma</button>
+						<button type="reset" class="btn btn-outline-warning btn-lg">Reset</button>
+					</div>
+					<!-- /Bottoni -->
+					<input type="hidden" th:field="*{status}">
+				</form>
+			</div>
+		</div>
 	</main>
 	
 	<footer th:replace="~{fragments/fragments :: footer}"></footer>

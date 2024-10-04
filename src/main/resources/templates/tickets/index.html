@@ -1,116 +1,93 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{fragments/fragments :: head(title='Ticket')}">
-</head>
+<head th:insert="~{fragments/fragments :: head(title='Ticket')}"></head>
 <body>
-	<header th:insert="~{fragments/fragments :: navbar}">
-		
-	</header>
-    
-	<main class="container">
-		<div class="row">
-			<div class="col-12">	
-				
-				<th:block>
-					<h1 class="py-4 mb-2 text-center">
-						GESTIONE DEI TICKET
-					</h1>
-						
-								<form th:action="@{/tickets/search}" method="GET" class="col-12 p-4">
-										<div class="form-group my-3 row">
-											<div class="col-md-8">
-												<input name="title" type="text" class="form-control me-2 w-100" id="title-input"
-													placeholder="cerca tickets per titolo">
+	<header th:insert="~{fragments/fragments :: navbar}"></header>
+
+	<main class="container my-5">
+		<div class="text-center mb-5">
+			<h1 class="display-5 fw-bold">Gestione dei Ticket</h1>
+		</div>
+
+		<!-- Form di ricerca -->
+		<form th:action="@{/tickets/search}" method="GET" class="row g-3 mb-4">
+			<div class="col-md-8">
+				<input name="title" type="text" class="form-control form-control-lg" placeholder="Cerca tickets per titolo">
+			</div>
+			<div class="col-md-4">
+				<button type="submit" class="btn btn-success btn-lg w-100">Cerca Tickets</button>
+			</div>
+		</form>
+
+		<!-- Tabella Ticket -->
+		<div class="table-responsive">
+			<table class="table table-striped table-hover align-middle">
+				<thead class="table-primary text-center">
+					<tr>
+						<th>ID</th>
+						<th>Titolo</th>
+						<th>Categoria</th>
+						<th>Stato</th>
+						<th>Creato il</th>
+						<th>Aggiornamenti</th>
+						<th>Azioni</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="ticket : ${tickets}" class="text-center">
+						<td th:text="${ticket.id}" class="fs-5 fw-bold"></td>
+						<td th:text="${ticket.title}"></td>
+						<td th:text="${ticket.category.name}"></td>
+						<td th:text="${ticket.status}" class="pt-3"></td>
+						<td th:text="${ticket.getCreatedAt()}"></td>
+						<td th:text="${ticket.getUpdatedAt()}"></td>
+						<td class="d-flex justify-content-center">
+							<a class="btn btn-info btn-sm mx-1" th:href="@{'/tickets/show/{id}'(id=${ticket.id})}">
+								<i class="bi bi-eye"></i> Dettagli
+							</a>
+							<a class="btn btn-warning btn-sm mx-1" th:href="@{'/tickets/edit/{id}'(id=${ticket.id})}">
+								<i class="bi bi-pencil"></i> Modifica
+							</a>
+							<th:block sec:authorize="hasAuthority('ADMIN')">
+								<!-- Button trigger modal -->
+								<button type="button" class="btn btn-danger btn-sm mx-1" data-bs-toggle="modal"
+									th:data-bs-target="'#delete-' + ${ticket.id}">
+									<i class="bi bi-trash"></i> Cancella
+								</button>
+								<!-- Modal -->
+								<div class="modal fade" th:id="'delete-' + ${ticket.id}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="modalLabel">Conferma cancellazione</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 											</div>
-											<div class="col-4 ps-0">
-												<button type="submit" class="btn btn-success w-100">Cerca Tickets</button>
+											<div class="modal-body text-center">
+												Sei sicuro di voler eliminare il ticket "<span th:text="${ticket.title}"></span>"?
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+												<form th:action="@{'/tickets/delete/{id}'(id=${ticket.id})}" method="POST" class="d-inline">
+													<button class="btn btn-danger" type="submit">Conferma</button>
+												</form>
 											</div>
 										</div>
-								</form>
-								<!-- Bottone Creazione -->
-								<div class="mb-3 d-flex pe-5">
-									<a th:href="@{/tickets/create}" class="ms-auto me-5 btn btn-lg btn-primary">Aggiungi nuovo ticket</a>					
-								</div> 
-								
-					<table class="table table-striped table-hover mt-2">
-										<thead>
-											<tr>
-												<th>ID</th>
-												<th>Titolo</th>
-												<th>Categoria</th>
-												<th>Stato</th>
-												<th>Creato il</th>
-												<th>Aggiornamenti</th>
-												<th class="text-center">Azioni</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr th:each="ticket : ${tickets}">
-												<td th:text="${ticket.id}" class="fs-3"></td>
-												<td th:text="${ticket.title}" class="pt-3"></td>
-												<td th:text="${ticket.category.name}" class="pt-3"></td>
-												<td th:text="${ticket.status}" class="pt-3"></td>
-												<td th:text="${ticket.getCreatedAt()}" class="pt-3"></td>
-												<td th:text="${ticket.getUpdatedAt()}" class="pt-3"></td>
-												<td class="text-center">
-													<a class="btn btn-sm btn-primary m-1"
-														th:href="@{'/tickets/show/{id}'(id=${ticket.id})}"
-														role="button">Dettagli</a>
-													<a class="btn btn-sm btn-warning m-1"
-														th:href="@{'/tickets/edit/{id}'(id=${ticket.id})}"
-														role="button">Modifica</a>  
-														<th:block sec:authorize="hasAuthority('ADMIN')">
-															<!-- Button trigger modal -->
-															<button type="button" class="btn btn-sm btn-danger m-1" data-bs-toggle="modal"
-																th:data-bs-target="'#delete-' + ${ticket.id}">
-																Cancella
-															</button>
-															<!-- Modal -->
-															<div class="modal fade" th:id="'delete-' + ${ticket.id}" tabindex="-1"
-																aria-labelledby="exampleModalLabel" aria-hidden="true">
-																<div class="modal-dialog">
-																	<div class="modal-content">
-																		<div class="modal-header">
-																			<h1 class="modal-title fs-5" id="exampleModalLabel">Conferma
-																				cancellazione</h1>
-																			<button type="button" class="btn-close" data-bs-dismiss="modal"
-																				aria-label="Close"></button>
-																		</div>
-																		<div class="modal-body text-center">
-																			Sei sicuro di voler eliminare il ticket [[ ${ticket.title} ]]?
-																		</div>
-																		<div class="modal-footer">
-																			<button type="button" class="btn btn-secondary"
-																				data-bs-dismiss="modal">Annulla</button>
-																			<form class="d-inline-block"
-																				th:action="@{http://localhost:8080/tickets/delete/{id}(id=${ticket.id})}"
-																				method="POST">
-																				<button class="btn btn-danger m-1" type="submit"
-																					id="submitButton">Conferma</button>
-																			</form>
-																		</div>
-																	</div>
-																</div>
-															</div>
-														</th:block>	
-												</td>
-											</tr>
-										</tbody>
-					
-				</th:block>	
-				
-				<!--
-				<th:block th:unless="${pizze.size() > 0}">
-					<h3 class="py-5 text-center">
-						No pizza has been found with query <strong>[[ ${pizzaName} ]]</strong>
-					</h3>
-				</th:block>
-				               -->
-			</div>	
+									</div>
+								</div>
+							</th:block>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+				<!-- Bottone Creazione -->
+				<div class="d-flex justify-content-end mb-4">
+					<a th:href="@{/tickets/create}" class="btn btn-primary btn-lg">
+						<i class="bi bi-plus-circle"></i> Aggiungi nuovo ticket
+					</a>
+				</div>
 		</div>
-		
 	</main>
-	
+
 	<footer th:replace="~{fragments/fragments :: footer}"></footer>
 </body>
 </html>

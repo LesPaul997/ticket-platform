@@ -20,16 +20,27 @@ public class SecurityConfiguration {
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http.authorizeHttpRequests()
-		.requestMatchers("/tickets/create").hasAuthority("ADMIN")
-		.requestMatchers("/", "/tickets", "/tickets/show/*", "/tickets/edit/*", "/notes/show", "notes/edit/*", "/users/show").hasAnyAuthority("ADMIN", "OPERATOR")
-		.requestMatchers(HttpMethod.POST, "/tickets/create").hasAnyAuthority("ADMIN")
-		.requestMatchers(HttpMethod.POST, "/tickets/edit/*", "/notes/edit/*", "/notes/create").hasAnyAuthority("ADMIN", "OPERATOR")
-		.requestMatchers("/**").permitAll()
-		.and().formLogin().and().logout()
-		.and().exceptionHandling()
-		.and().csrf().disable();
+        .requestMatchers("/tickets/create").hasAuthority("ADMIN")
+        .requestMatchers("/", "/tickets", "/tickets/show/*", "/tickets/edit/*", "/notes/show", "notes/edit/*", "/users/show")
+            .hasAnyAuthority("ADMIN", "OPERATOR")
+        .requestMatchers(HttpMethod.POST, "/tickets/create").hasAnyAuthority("ADMIN")
+        .requestMatchers(HttpMethod.POST, "/tickets/edit/*", "/notes/edit/*", "/notes/create")
+            .hasAnyAuthority("ADMIN", "OPERATOR")
+        .requestMatchers("/**").permitAll()
+        .and()
+        .formLogin()
+            .permitAll()
+        .and()
+        .logout()
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/home")  
+            .permitAll()
+        .and()
+        .exceptionHandling()
+        .and()
+        .csrf().disable();
 
-		return http.build();
+    return http.build();
 	}
 
 	@Bean

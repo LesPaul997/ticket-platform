@@ -1,25 +1,29 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head th:insert="~{fragments/fragments :: head(title='Homepage')}">
-	</head>
+<head th:insert="~{fragments/fragments :: head(title='Homepage')}"></head>
 <body>
-	<header th:insert="~{fragments/fragments :: navbar}">
-			
-	</header>
+	<header th:insert="~{fragments/fragments :: navbar}"></header>
+	
 	<main>
-		<div class="d-flex justify-content-center">
-			<div class="card mx-4 my-4" style="width: 25rem;">
-			  <!--<img src="@{/img/operatore1.png}" class="card-img-top" alt="Operatore1">-->
-			  <div class="card-body text-center">
-			    <h5 class="card-title">Gestione Ticket</h5>
-			    <p class="card-text">Benvenuto, per info clicca il bottone</p>
-			    <a th:href="@{/tickets}" class="btn btn-primary d-flex justify-content-center">Area Ticket</a>
-			  </div>
+		<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+			<div class="card shadow-lg" style="width: 28rem; border-radius: 1rem;">
+				<div class="card-header text-center bg-primary text-white" style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+					<h4 class="my-2">Gestione Ticket</h4>
+				</div>
+				<div class="card-body text-center p-4">
+					<img th:src="@{/img/operatore2.jpg}" class="card-img-top mb-3" alt="Operatore">
+					<p class="card-text fs-5 text-muted mb-4">Benvenuto nel sistema di gestione ticket! Per accedere alla tua area personale, premi il pulsante qui sotto.</p>
+					<a th:href="@{/tickets}" class="btn btn-primary btn-lg px-4 py-2 d-flex align-items-center justify-content-center">
+						<i class="bi bi-arrow-right-circle me-2"></i> Area Ticket
+					</a>
+				</div>
+				<div class="card-footer text-center bg-white py-3" style="border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+					<p class="text-muted small mb-0">Semplifica il lavoro e migliora l’efficienza con il nostro sistema di ticket.</p>
+				</div>
 			</div>
 		</div>
-	</main>
-	<footer>
-		<th:block th:replace="~{fragments/fragments :: footer}"></th:block>
-	</footer>
+	</mainc>
+	
+	<footer th:replace="~{fragments/fragments :: footer}"></footer>
 </body>
 </html>

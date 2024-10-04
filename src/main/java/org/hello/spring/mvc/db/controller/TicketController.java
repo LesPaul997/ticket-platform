@@ -113,48 +113,37 @@ public class TicketController {
 	    Ticket newTicket = new Ticket();
 	    newTicket.setStatus("da fare");
 
-	    // Aggiungi il ticket e altre entità al modello
+	    // Aggiungi il ticket e altre entità al modello, inclusi solo gli operatori disponibili
 	    model.addAttribute("ticket", newTicket);
-	    model.addAttribute("operators", userService.getAll());
+	    model.addAttribute("operators", userService.getAvailableOperators());
 	    model.addAttribute("categories", categoryService.getAll());
 
 	    return "/tickets/create";
 	}
-	
-		
-//	// STORE
-//	@PostMapping("/create")
-//	public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, 
-//	                    Model model, RedirectAttributes attributes) {
-//
-//	    // Controlla se ci sono errori di validazione
-//	    if (bindingResult.hasErrors()) {
-//	        model.addAttribute("operators", userService.getAll());
-//	        model.addAttribute("categories", categoryService.getAll());
-//	        return "/tickets/create";
-//	    }
-//
-//	    // Salva il ticket
-//	    ticketService.save(ticketForm);
-//
-//	    // Aggiungi un messaggio di successo e reindirizza alla lista dei ticket
-//	    attributes.addFlashAttribute("successMessage", "Ticket #" + ticketForm.getId() + " creato con successo");
-//
-//	    return "redirect:/tickets";
-//	}
-	
+
+
+	// STORE
 	@PostMapping("/create")
 	public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, 
 	                    Model model, RedirectAttributes attributes, @AuthenticationPrincipal UserDetails currentUser) {
 
 	    // Controlla se ci sono errori di validazione
 	    if (bindingResult.hasErrors()) {
-	        model.addAttribute("operators", userService.getAll());
+	        model.addAttribute("operators", userService.getAvailableOperators());
 	        model.addAttribute("categories", categoryService.getAll());
 	        return "/tickets/create";
 	    }
 
-	    // Recupera l'utente attualmente loggato e assegnalo al ticket
+	    // Controlla se l'operatore selezionato è disponibile
+	    User assignedOperator = userService.getById(ticketForm.getUser().getId());
+	    if (!assignedOperator.isStatus()) {
+	        bindingResult.rejectValue("user", "error.ticket", "L'operatore selezionato non è disponibile.");
+	        model.addAttribute("operators", userService.getAvailableOperators());
+	        model.addAttribute("categories", categoryService.getAll());
+	        return "/tickets/create";
+	    }
+
+	    // Recupera l'utente attualmente loggato e assegna il ticket
 	    User user = userService.getByUsername(currentUser.getUsername());
 	    ticketForm.setUser(user);
 

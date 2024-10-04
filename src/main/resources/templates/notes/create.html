@@ -1,54 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{fragments/fragments :: head(title='Crea nota')}">
+<head th:insert="~{fragments/fragments :: head(title='Crea Nota')}">
 </head>
 <body>
-	<header th:insert="~{fragments/fragments :: navbar}">
-		
-	</header>
+	<header th:insert="~{fragments/fragments :: navbar}"></header>
     
-	<main class="container">
-		<div class="row">
-			<div class="col-12">	
+	<main class="container py-5">
+		<div class="row justify-content-center">
+			<div class="col-lg-6 col-md-8 col-sm-12">	
+				<h1 class="text-center fw-bold mb-4">Creazione di una Nuova Nota</h1>
 				
-				<th:block>
-					
-					<h1 class="py-4 mb-2 text-center">
-						Creazione di una nuova nota
-					</h1>	
-					
-						<div class="row justify-content-center">
-							<div class="col-6">
-								<!-- Form -->
-								<form id="note-form" th:object="${note}" th:action="@{/notes/create}" method="POST">
-									<div class="form-floating">
-									  <textarea class="form-control" th:field="*{text}" placeholder="Inserisci qui la tua Nota" id="text" style="height: 100px"></textarea>
-									  <label for="floatingTextarea2">Nota</label>
-									</div>
-										<div th:if="${#fields.hasErrors('text')}" class="text-danger">
-										    <ul>
-										        <li th:each="err : ${#fields.errors('text')}" th:text="${err}"></li>
-										    </ul>
-										</div>													
-									<!-- Bottoni -->
-									<div class="mb-3 d-flex justify-content-between">
-										<input type="submit" class="btn btn-primary btn-lg" value="Conferma inserimento">
-										<input type="reset" class="btn btn-warning btn-lg" value="Reset">
-									</div>
-									<!-- /Bottoni -->
-									<input type="hidden" th:field="*{ticket.id}">
-									<input type="hidden" th:field="*{user.id}">
-								</form>
-							</div>
+				<div class="card shadow-lg p-4">
+					<form id="note-form" th:object="${note}" th:action="@{/notes/create}" method="POST">
+						
+						<div class="form-floating mb-4">
+							<textarea class="form-control" th:field="*{text}" placeholder="Inserisci qui la tua Nota" id="text" style="height: 120px"></textarea>
+							<label for="text">Nota</label>
 						</div>
 						
-							
-					
-				</th:block>	
-				
-			</div>	
+						<div th:if="${#fields.hasErrors('text')}" class="text-danger mb-3">
+							<ul>
+								<li th:each="err : ${#fields.errors('text')}" th:text="${err}"></li>
+							</ul>
+						</div>
+
+						<!-- Bottoni -->
+						<div class="d-flex justify-content-between">
+							<input type="submit" class="btn btn-primary" value="Conferma Inserimento">
+							<input type="reset" class="btn btn-warning" value="Reset">
+						</div>
+						<!-- /Bottoni -->
+						
+						<input type="hidden" th:field="*{ticket.id}">
+						<input type="hidden" th:field="*{user.id}">
+					</form>
+				</div>
+			</div>
 		</div>
-		
 	</main>
 	
 	<footer th:replace="~{fragments/fragments :: footer}"></footer>

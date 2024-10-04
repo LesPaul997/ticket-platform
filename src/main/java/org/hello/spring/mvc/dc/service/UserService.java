@@ -37,4 +37,9 @@ public class UserService {
 		
 		repo.save(operator);
 	}
+	
+	public List<User> getAvailableOperators() {
+	    return repo.findByStatusTrue();
+	}
+
 }
