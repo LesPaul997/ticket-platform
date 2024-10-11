@@ -22,8 +22,9 @@
                     </h4>
                 </div>
                 <div class="card-body">
-                    <p><strong>Creato da:</strong> <span class="badge bg-secondary" th:text="${ticket.user.username}"></span></p>
-                    <p><strong>Titolo:</strong> [[${ticket.title}]]</p>
+                    <p><strong>Creato da:</strong> <span class="badge bg-secondary" th:text="${ticket.creator.username}"></span></p>
+					<p><strong>Assegnato a:</strong> <span class="badge bg-secondary" th:text="${ticket.user.username}"></span></p>
+					<p><strong>Titolo:</strong> [[${ticket.title}]]</p>
                     <p><strong>Categoria:</strong> [[${ticket.category.name}]]</p>
                     <p><strong>Stato:</strong> [[${ticket.status}]]</p>
                     <p><strong>Creato il:</strong> [[${ticket.getCreatedAt()}]]</p>

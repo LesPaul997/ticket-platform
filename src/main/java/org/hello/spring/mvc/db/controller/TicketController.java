@@ -43,19 +43,24 @@ public class TicketController {
 	
 	@GetMapping()
 	public String index(Authentication authentication, Model model) {
-		
-		// Il blocco di codice verifica se l'utente autenticato ha il ruolo di "ADMIN". 
-		// Se sì, recupera tutti i ticket e li rende disponibili nella vista /tickets/index, permettendo così all'amministratore di visualizzare tutti i ticket nel sistema.
-		if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
-			model.addAttribute("tickets", ticketService.getAll());
-			return "/tickets/index";
-		}
-		
-		model.addAttribute("tickets", userService.getByUsername(authentication.getName()).getTickets());
-		return "/tickets/index";
+	    // Verifica se l'utente autenticato ha il ruolo di "ADMIN"
+	    boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+
+	    if (isAdmin) {
+	        // Se è un admin, mostra tutti i ticket
+	        model.addAttribute("tickets", ticketService.getAll());
+	    } else {
+	        // Se è un operatore, mostra solo i ticket associati a lui
+	        User operator = userService.getByUsername(authentication.getName());
+	        model.addAttribute("tickets", ticketService.getTicketsByOperator(operator));
+	    }
+
+	    return "/tickets/index";
 	}
+
 	
-	// Ricerca per ID SHOW
+	
+	// Ricerca per ID / SHOW
 	@GetMapping("/show/{id}")
 	public String show(@PathVariable int id, Authentication authentication, Model model) {
 	    
@@ -83,7 +88,7 @@ public class TicketController {
 	public String search(@RequestParam String title, Authentication authentication,  Model model) {
 		
 		// Recupera i ticket ordinati per titolo
-		List<Ticket> orderedTickets = ticketService.getTitleWithOrderByTitle(title);
+		List<Ticket> orderedTickets = ticketService.getByTitleWithOrderByTitle(title);
 		
 		// Controlla se l'utente è un amministratore
 		boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
@@ -111,7 +116,7 @@ public class TicketController {
 	    
 	    // Crea un nuovo ticket con status predefinito "da fare"
 	    Ticket newTicket = new Ticket();
-	    newTicket.setStatus("da fare");
+	    newTicket.setStatus("da eseguire");
 
 	    // Aggiungi il ticket e altre entità al modello, inclusi solo gli operatori disponibili
 	    model.addAttribute("ticket", newTicket);
@@ -134,27 +139,35 @@ public class TicketController {
 	        return "/tickets/create";
 	    }
 
-	    // Controlla se l'operatore selezionato è disponibile
-	    User assignedOperator = userService.getById(ticketForm.getUser().getId());
-	    if (!assignedOperator.isStatus()) {
-	        bindingResult.rejectValue("user", "error.ticket", "L'operatore selezionato non è disponibile.");
-	        model.addAttribute("operators", userService.getAvailableOperators());
+	    // Recupera l'utente che sta creando il ticket (admin o operatore)
+	    User creator = userService.getByUsername(currentUser.getUsername());
+
+	    // Trova un operatore disponibile
+	    List<User> availableOperators = userService.getAvailableOperators();
+	    if (availableOperators.isEmpty()) {
+	        bindingResult.rejectValue("user", "error.ticket", "Nessun operatore disponibile.");
+	        model.addAttribute("operators", availableOperators);
 	        model.addAttribute("categories", categoryService.getAll());
 	        return "/tickets/create";
 	    }
 
-	    // Recupera l'utente attualmente loggato e assegna il ticket
-	    User user = userService.getByUsername(currentUser.getUsername());
-	    ticketForm.setUser(user);
+	    // Assegna il primo operatore disponibile al ticket
+	    User assignedOperator = availableOperators.get(0);
+	    ticketForm.setUser(assignedOperator);
+
+	    // Imposta il creatore del ticket (admin o operatore)
+	    ticketForm.setCreator(creator);
 
 	    // Salva il ticket
 	    ticketService.save(ticketForm);
 
 	    // Aggiungi un messaggio di successo e reindirizza alla lista dei ticket
-	    attributes.addFlashAttribute("successMessage", "Ticket #" + ticketForm.getId() + " creato con successo");
+	    attributes.addFlashAttribute("successMessage", "Ticket #" + ticketForm.getId() + " creato con successo e assegnato a " + assignedOperator.getUsername());
 
 	    return "redirect:/tickets";
 	}
+
+
 
 
 	// EDIT
@@ -165,6 +178,8 @@ public class TicketController {
 	    Ticket ticketToEdit = ticketService.getById(id);
 	    
 	    // Controlla se l'utente è un operatore e non possiede il ticket
+	    boolean isAdmin = authentication.getAuthorities().stream()
+	    					 .anyMatch(a -> a.getAuthority().equals("ADMIN"));
 	    boolean isOperator = authentication.getAuthorities().stream()
 	                        .anyMatch(a -> a.getAuthority().equals("OPERATOR"));
 	    boolean userOwnsTicket = userService.getByUsername(authentication.getName()).getTickets()
@@ -179,6 +194,7 @@ public class TicketController {
 	    model.addAttribute("ticket", ticketToEdit);
 	    model.addAttribute("operators", userService.getAll());
 	    model.addAttribute("categories", categoryService.getAll());
+	    model.addAttribute("isAdmin", isAdmin);
 
 	    return "/tickets/edit";
 	}
@@ -188,13 +204,26 @@ public class TicketController {
 	// UPDATE
 	@PostMapping("/edit/{id}")
 	public String update(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, 
-	                     Model model, RedirectAttributes attributes) {
+	                     Model model, RedirectAttributes attributes, Authentication authentication) {
 
 	    // Controlla se ci sono errori di validazione
 	    if (bindingResult.hasErrors()) {
 	        model.addAttribute("operators", userService.getAll());
-	        //model.addAttribute("categories", categoryService.getAll());
 	        return "/tickets/edit";
+	    }
+
+	    // Recupera il ticket originale dal database
+	    Ticket existingTicket = ticketService.getById(ticketForm.getId());
+
+	    // Controlla se l'utente è un admin
+	    boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+	    
+	    // Mantieni il creator originale
+	    ticketForm.setCreator(existingTicket.getCreator());
+	    
+	    // Se l'utente è un admin, non permettiamo la modifica dello stato
+	    if (isAdmin) {
+	        ticketForm.setStatus(existingTicket.getStatus()); // Manteniamo lo stato originale
 	    }
 
 	    // Salva il ticket aggiornato

@@ -40,7 +40,7 @@ public class UserController {
 		boolean userStatus = userToUpdate.isStatus();
 		
 		if (userToUpdate.getInProgress() > 0) {
-			attributes.addFlashAttribute("notSuccessMessage", "Errore, hai altri ticket aperti allo stato 'Non disponibile'");
+			attributes.addFlashAttribute("notSuccessMessage", "Errore, hai altri ticket aperti!'");
 			return "redirect:/users/index";
 		}
 		

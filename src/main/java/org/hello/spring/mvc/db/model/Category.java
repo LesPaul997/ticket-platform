@@ -2,7 +2,7 @@ package org.hello.spring.mvc.db.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -25,7 +25,7 @@ public class Category {
 	private String name;
 	
 	@OneToMany(mappedBy = "category", cascade = { CascadeType.REMOVE })
-	@JsonManagedReference
+	@JsonBackReference
 	private List<Ticket> tickets;
 
 	public Integer getId() {

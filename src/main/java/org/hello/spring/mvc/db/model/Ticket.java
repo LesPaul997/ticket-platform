@@ -43,7 +43,7 @@ public class Ticket {
 	private String description;
 	
 	@ManyToOne
-	@JsonBackReference
+	@JsonManagedReference
 	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
 	
@@ -66,6 +66,11 @@ public class Ticket {
 	@JsonManagedReference
 	private List<Note> notes;
 	
+	// Aggiunta di campo creatore
+	@ManyToOne
+	@JsonBackReference // Previene la serializzazione del ciclo user
+	@JoinColumn(name = "creator_id", nullable = false)
+	private User creator;
 
 	public Integer getId() {
 		return id;
@@ -137,6 +142,14 @@ public class Ticket {
 
 	public void setNotes(List<Note> notes) {
 		this.notes = notes;
+	}
+
+	public User getCreator() {
+		return creator;
+	}
+
+	public void setCreator(User creator) {
+		this.creator = creator;
 	}
 	
 	

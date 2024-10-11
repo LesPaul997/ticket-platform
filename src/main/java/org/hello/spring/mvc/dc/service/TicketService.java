@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hello.spring.mvc.db.model.Ticket;
+import org.hello.spring.mvc.db.model.User;
 import org.hello.spring.mvc.db.repo.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,11 +33,15 @@ public class TicketService {
 		return repo.findAll();
 	}
 	
-	public List<Ticket> getTitleWithOrderByTitle(String title) {
+	public List<Ticket> getByTitleWithOrderByTitle(String title) {
 		
 		return repo.findByTitleContainingOrderByTitle(title);
 	}
 	
+	public List<Ticket> getTicketsByOperator(User operator) {
+	    return repo.findByUserId(operator.getId()); 
+	}
+
 	public Ticket create(Ticket ticket) {
 		
 		return repo.save(ticket);
@@ -57,4 +62,15 @@ public class TicketService {
 		
 		repo.deleteById(id);
 	}
+	
+	// Metodo per filtrare per stato
+	public List<Ticket> getByStatus(String status) {
+	    return repo.findByStatus(status);
+	}
+
+	// Metodo per filtrare per categoria
+	public List<Ticket> getByCategoryName(String categoryName) {
+	    return repo.findByCategory_Name(categoryName);
+	}
+
 }

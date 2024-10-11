@@ -53,12 +53,17 @@
 					</div>
 
 					<div class="mb-4">
-						<label for="status" class="form-label fw-semibold">Stato</label>
-						<select class="form-select" id="status" th:field="*{status}">
-							<option value="da fare" selected>da fare</option>
-							<option value="in corso">in corso</option>
-							<option value="completato">completato</option>
-						</select>
+					    <label for="status" class="form-label fw-semibold">Stato</label>
+					    
+					    <!-- Se l'utente è admin, disabilitiamo il campo Stato -->
+					    <select class="form-select" id="status" th:field="*{status}" th:disabled="${isAdmin}">
+					        <option value="da fare" selected>da eseguire</option>
+					        <option value="in corso">in corso</option>
+					        <option value="completato">completato</option>
+					    </select>
+					    
+					    <!-- Solo per gli admin, mostriamo lo stato corrente senza possibilità di modifica -->
+					    <p th:if="${isAdmin}" th:text="*{status}"></p>
 					</div>
 					
 					<!-- Bottoni -->

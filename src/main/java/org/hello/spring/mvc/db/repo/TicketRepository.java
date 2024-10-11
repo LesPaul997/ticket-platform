@@ -12,4 +12,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer>{
 	List<Ticket> findByTitleContainingOrderByTitle(String title);
 	
 	List<Ticket> findByStatus(String status);
+	
+	List<Ticket> findByCategory_Name(String categoryName);
+	
+	List<Ticket> findByUserId(Integer userId);
+
 }
