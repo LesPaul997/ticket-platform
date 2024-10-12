@@ -29,17 +29,22 @@ public class TicketRestController {
 	
 	// Endpoint principale
 	@GetMapping
-	public List<Ticket> index(@RequestParam(required = false) String title) {
+	public List<Ticket> index(@RequestParam(required = false) String title, 
+	                          @RequestParam(required = false) String category,
+	                          @RequestParam(required = false) String status) {
+	    List<Ticket> result = ticketService.getAll();
 
-		List<Ticket> result;
+	    if (title != null && !title.isEmpty()) {
+	        result = result.stream().filter(ticket -> ticket.getTitle().contains(title)).collect(Collectors.toList());
+	    }
+	    if (category != null && !category.isEmpty()) {
+	        result = result.stream().filter(ticket -> ticket.getCategory().getName().equalsIgnoreCase(category)).collect(Collectors.toList());
+	    }
+	    if (status != null && !status.isEmpty()) {
+	        result = result.stream().filter(ticket -> ticket.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
+	    }
 
-		if (title != null && !title.isEmpty()) {
-			result = ticketService.getByTitleWithOrderByTitle(title);
-		} else {
-			result = ticketService.getAll();
-		}
-		
-		return result;
+	    return result;
 	}
 	
 	// Endpoint per ottenere un ticket tramite ID
