@@ -151,9 +151,9 @@ public class TicketController {
 	        return "/tickets/create";
 	    }
 
-	    // Assegna il primo operatore disponibile al ticket
-	    User assignedOperator = availableOperators.get(0);
-	    ticketForm.setUser(assignedOperator);
+//	     Assegna il primo operatore disponibile al ticket
+//	    User assignedOperator = availableOperators.get(0);
+//	    ticketForm.setUser(assignedOperator);
 
 	    // Imposta il creatore del ticket (admin o operatore)
 	    ticketForm.setCreator(creator);
@@ -162,7 +162,7 @@ public class TicketController {
 	    ticketService.save(ticketForm);
 
 	    // Aggiungi un messaggio di successo e reindirizza alla lista dei ticket
-	    attributes.addFlashAttribute("successMessage", "Ticket #" + ticketForm.getId() + " creato con successo e assegnato a " + assignedOperator.getUsername());
+	    attributes.addFlashAttribute("successMessage", "Ticket #" + ticketForm.getId() + " creato con successo e assegnato a ");
 
 	    return "redirect:/tickets";
 	}
