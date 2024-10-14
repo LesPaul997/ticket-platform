@@ -19,10 +19,10 @@ public class UserService {
 		return repo.findById(id).get();
 	}
 	
-	public User getByUsername(String username) {
-		
-		return repo.findByUsername(username).get();
-	}
+//	public User getByUsername(String username) {
+//		
+//		return repo.findByUsername(username).get();
+//	}
 	
 	public Optional<User> getOptionalById(Integer id) {
 		return repo.findById(id);
@@ -40,6 +40,15 @@ public class UserService {
 	
 	public List<User> getAvailableOperators() {
 	    return repo.findByStatusTrue();
+	}
+	
+	public User getByUsername(String username) {
+	    User user = repo.findByUsername(username).get();
+	    int inProgressTickets = (int) user.getTickets().stream()
+	        .filter(ticket -> !ticket.getStatus().equalsIgnoreCase("completato"))
+	        .count();
+	    user.setInProgress(inProgressTickets); // Aggiorna il campo con il numero di ticket non completati
+	    return user;
 	}
 
 }

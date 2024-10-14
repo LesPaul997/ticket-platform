@@ -168,8 +168,6 @@ public class TicketController {
 	}
 
 
-
-
 	// EDIT
 	@GetMapping("/edit/{id}")
 	public String edit(@PathVariable int id, Authentication authentication, Model model) {
@@ -178,12 +176,9 @@ public class TicketController {
 	    Ticket ticketToEdit = ticketService.getById(id);
 	    
 	    // Controlla se l'utente è un operatore e non possiede il ticket
-	    boolean isAdmin = authentication.getAuthorities().stream()
-	    					 .anyMatch(a -> a.getAuthority().equals("ADMIN"));
-	    boolean isOperator = authentication.getAuthorities().stream()
-	                        .anyMatch(a -> a.getAuthority().equals("OPERATOR"));
-	    boolean userOwnsTicket = userService.getByUsername(authentication.getName()).getTickets()
-	                           .contains(ticketToEdit);
+	    boolean isAdmin = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+	    boolean isOperator = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("OPERATOR"));
+	    boolean userOwnsTicket = userService.getByUsername(authentication.getName()).getTickets().contains(ticketToEdit);
 	    
 	    // Se l'utente è un operatore e non possiede il ticket, mostra un errore
 	    if (isOperator && !userOwnsTicket) {
@@ -198,8 +193,7 @@ public class TicketController {
 
 	    return "/tickets/edit";
 	}
-
-		
+	
 	
 	// UPDATE
 	@PostMapping("/edit/{id}")

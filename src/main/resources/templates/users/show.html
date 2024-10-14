@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/fragments :: head(title='Informazioni Utente')}">
+</head>
+<body>
+
+	<header th:insert="~{fragments/fragments :: navbar}">
+	</header>
+
+	<main class="container">
+		<div class="row">
+
+            <!-- Mostra messaggio di errore -->
+            <th:block th:if="${errorMessage != null}">
+                <div class="alert alert-danger" th:text="${errorMessage}"></div>
+            </th:block>
+
+			<!-- Info utente -->
+			<div class="col-4">
+				<div class="text-bg-secondary p-2 mt-3 rounded">
+					<h4 class="ms-3 mb-3 mt-2 fw-bold text-break" th:text="'Informazioni - ' + ${user.username}"></h4>
+					<div class="ms-3 mb-3">
+						<th:block th:each="role : ${user.roles}">
+							<span class="fw-bold me-2">Ruoli: </span>
+							<span class="me-2" th:text="${role.name}"></span>
+						</th:block>
+					</div>
+					<div class="ms-3 mb-3">
+						<span class="fw-bold me-2">Email: </span>
+						<span class="text-break" th:text="${user.email}"></span>
+					</div>
+					<th:block sec:authorize="hasAuthority('OPERATOR')">
+						<div class="ms-3 mb-3">
+							<span class="fw-bold me-2">Ticket totali: </span>
+							<span th:text="${user.tickets.size}"></span>
+						</div>
+						<div class="ms-3 mb-3">
+							<span class="fw-bold me-2">Ticket non completati: </span>
+							<span th:text="${user.InProgress}"></span>
+						</div> 
+					</th:block>
+				</div>
+			</div>
+
+			<!-- Bottone disponibilità -->
+			<th:block sec:authorize="hasAuthority('OPERATOR')">
+				<div class="col-8 mt-3">
+					<form id="user-form" th:action="@{/users/edit}" method="POST">
+						<span class="fw-bold me-2">STATO: </span>
+						<button type="submit" class="btn my-2" title="Cambia Stato"
+							th:text="${user.status} ? 'DISPONIBILE' : 'NON DISPONIBILE'"
+							th:classappend="${user.status} ? 'btn-success' : 'btn-danger'"></button>
+					</form>
+				</div>
+			</th:block>
+		</div>
+	</main>
+
+	<footer th:replace="~{fragments/fragments :: footer}"></footer>
+
+</body>
+</html>

@@ -38,11 +38,13 @@ public class NoteController {
 		
 		// Ticket associato all'id
 		Ticket ticketById = ticketService.getById(id);
+		// Il codice verifica se l'utente autenticato ha il ruolo "OPERATOR" e se non possiede il ticket specifico
+		// Se entrambe queste condizioni sono vere, il sistema reindirizza l'utente a una pagina di errore 
 		if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("OPERATOR")) && !userService.getByUsername(authentication.getName()).getTickets().contains(ticketById)) {
 			return "/pages/authenticationError";
 		}
 		
-		// Ticket e Utente del ticket da passare al model
+		// Crea una nuova nota associata a un ticket e a un utente autenticato e poi la passa al modello per essere visualizzata 
 		Note newNote = new Note();
 		newNote.setTicket(ticketById);
 		newNote.setUser(userService.getByUsername(authentication.getName()));
@@ -71,9 +73,10 @@ public class NoteController {
 	@GetMapping("/edit/{id}")
 	public String edit(@PathVariable int id, Authentication authentication, Model model) {
 		
-		// Passiamo sempre un errore se l'utente non è autorizzato
+		// Recupera la nota dal database tramite il suo ID e la assegna alla variabile noteToEdit
 		Note noteToEdit = noteService.getById(id);
 		
+		// Controlla se l'utente autenticato è il proprietario della nota. Questo viene fatto recuperando tutte le note associate all'utente e verificando se la nota da modificare è tra queste
 		if (!userService.getByUsername(authentication.getName()).getNotes().contains(noteToEdit)) {
 			return "/pages/authenticationError";
 		}
@@ -86,12 +89,14 @@ public class NoteController {
 	@PostMapping("/edit/{id}")
 	public String update(@Valid @ModelAttribute("note") Note noteForm, BindingResult bindingResult, Model model, RedirectAttributes attributes) {
 		
+		// Se ci sono errori si ritorna alla edit
 		if (bindingResult.hasErrors()) {
 			return "/notes/edit";
 		}
 		
-		// Quando si modifica il ticket deve modificarsi anche l'orario
+		// Se non ci sono errori, la nota viene aggiornata nel database
 		noteService.save(noteForm);
+		// Dopo aver salvato la nota viene recuperato l'ID del ticket associato alla nota
 		int ticketID = noteForm.getTicket().getId();
 		ticketService.update(ticketService.getById(ticketID));
 		
@@ -103,10 +108,11 @@ public class NoteController {
 	@PostMapping("/delete/{id}")
 	public String delete(@PathVariable int id, Authentication authentication, RedirectAttributes attributes) {
 		
+		// Recupera la nota dal database tramite il suo ID usando il servizio e la assegna alla variabile
 		Note noteToDelete = noteService.getById(id);
 		int ticketID = noteToDelete.getTicket().getId();
 		
-		// Quando si modifica il ticket deve modificarsi anche l'orario
+		// Una volta eliminata la nota, il ticket associato viene aggiornato (come per esempio data e ora)
 		noteService.delete(noteToDelete);
 		ticketService.update(ticketService.getById(ticketID));
 		
