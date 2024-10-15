@@ -114,7 +114,7 @@ public class TicketController {
 	@GetMapping("/create")
 	public String create(Model model) {
 	    
-	    // Crea un nuovo ticket con status predefinito "da fare"
+	    // Crea un nuovo ticket con status predefinito "da eseguire"
 	    Ticket newTicket = new Ticket();
 	    newTicket.setStatus("da eseguire");
 
@@ -217,7 +217,7 @@ public class TicketController {
 	    
 	    // Se l'utente è un admin, non permettiamo la modifica dello stato
 	    if (isAdmin) {
-	        ticketForm.setStatus(existingTicket.getStatus()); // Manteniamo lo stato originale
+	        ticketForm.setStatus(existingTicket.getStatus()); 
 	    }
 
 	    // Salva il ticket aggiornato

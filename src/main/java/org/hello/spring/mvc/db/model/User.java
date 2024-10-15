@@ -78,7 +78,7 @@ public class User {
 	)
 	private Set<Role> roles = new HashSet<>();
 	
-	// Formula per calcolare i ticket in corso associati ad un utente
+	// Aggiungere un Formula per calcolare i ticket in corso associati ad un utente
 	private Integer InProgress;
 	
 	// Getter e Setter
